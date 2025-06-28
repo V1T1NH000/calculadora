@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <!-- Adicionando FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000; /* Fundo preto */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            position: relative; /* Tornando a calculadora relativa para posicionar a seta */
+            width: 300px; /* Largura da calculadora */
+            background-color: #333333; /* Fundo cinza escuro */
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .arrow {
+            position: absolute; /* Posicionamento absoluto */
+            top: 50%; /* Posiciona a seta no centro verticalmente */
+            right: -30px; /* Distância da borda direita da calculadora */
+            transform: translateY(-50%); /* Correção para centralizar verticalmente */
+            font-size: 24px;
+            color: orange; /* Cor laranja para a seta */
+            cursor: pointer;
+            transition: transform 0.3s ease; /* Adicionando transição à rotação */
+        }
+        .arrow:hover {
+            transform: translateY(-50%) rotate(90deg); /* Rotação ao passar o mouse */
+        }
+        .functions {
+            display: none;
+            position: absolute;
+            background-color: #333333;
+            border-radius: 6px;
+            padding: 10px;
+            top: 50%;
+            left: calc(100% + 10px); /* Posiciona no lado direito */
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+        .arrow:hover .functions {
+            display: block;
+        }
+        .function-item {
+            margin: 5px;
+            color: white;
+            cursor: pointer;
+            width: 70px; /* Largura dos botões de função */
+            height: 70px; /* Altura dos botões de função */
+            font-size: 20px; /* Tamanho da fonte dos botões de função */
+            border: none;
+            border-radius: 5px; /* Raio da borda dos botões de função */
+            background-color: orange; /* Cor laranja para os botões de função */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            line-height: 70px; /* Centraliza o texto verticalmente */
+        }
+        .function-item:hover {
+            background-color: #ff8c00; /* Cor laranja mais clara quando hover */
+        }
+        #display {
+            width: calc(100% - 40px);
+            height: 60px;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffffff; /* Cor branca para a tela */
+            color: #333333; /* Cor cinza para os números */
+            text-align: right;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+        input[type="button"] {
+            width: 80px; /* Largura dos botões */
+            height: 80px; /* Altura dos botões */
+            margin: 5px;
+            font-size: 24px; /* Tamanho da fonte */
+            border: none;
+            border-radius: 10px; /* Raio da borda */
+            background-color: #f0f0f0; /* Cor cinza para os botões */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            color: #333333; /* Cor do texto */
+        }
+        input[type="button"].operator {
+            background-color: orange; /* Cor laranja para os operadores */
+            color: white; /* Texto branco para os operadores */
+        }
+        input[type="button"]:hover {
+            background-color: #e0e0e0;
+        }
+        /* Ajuste para os botões "C" e "%" */
+        input[type="button"].double {
+            width: calc(80px + 10px); /* Largura de dois botões mais a margem entre eles */
+        }
+        input[type="button"].divide {
+            width: 65px; /* Ajuste para o botão de divisão */
+        }
+        .percent-button {
+            align-self: center; /* Alinha o botão verticalmente */
+            background-color: orange; /* Cor laranja para o botão de percentagem */
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" id="display" disabled>
+        <div class="row">
+            <input type="button" value="7" onclick="appendToDisplay('7')">
+            <input type="button" value="8" onclick="appendToDisplay('8')">
+            <input type="button" value="9" onclick="appendToDisplay('9')">
+            <div class="arrow" onclick="toggleFunctions()">
+                <i class="fas fa-arrow-right"></i>
+                <div class="functions">
+                    <div class="function-item" onclick="appendToDisplay('Math.log(')">log</div>
+                    <div class="function-item" onclick="appendToDisplay('Math.sin(')">sin</div>
+                    <div class="function-item" onclick="appendToDisplay('Math.cos(')">cos</div>
+                    <div class="function-item" onclick="appendToDisplay('Math.tan(')">tan</div>
+                    <div class="function-item" onclick="appendToDisplay('**2')">x^2</div>
+                    <div class="function-item" onclick="appendToDisplay('**')">x^y</div>
+                </div>
+            </div>
+        
+            <input type="button" class="operator percent-button" value="%" onclick="appendToDisplay('%')">
+        </div>
+        <div class="row">
+            <input type="button" value="4" onclick="appendToDisplay('4')">
+            <input type="button" value="5" onclick="appendToDisplay('5')">
+            <input type="button" value="6" onclick="appendToDisplay('6')">
+            <input type="button" class="operator" value="*" onclick="appendToDisplay('*')">
+        </div>
+        <div class="row">
+            <input type="button" value="1" onclick="appendToDisplay('1')">
+            <input type="button" value="2" onclick="appendToDisplay('2')">
+            <input type="button" value="3" onclick="appendToDisplay('3')">
+            <input type="button" class="operator" value="-" onclick="appendToDisplay('-')">
+        </div>
+        <div class="row">
+            <input type="button" value="0" onclick="appendToDisplay('0')">
+            <input type="button" value="." onclick="appendToDisplay('.')">
+            <input type="button" value="=" onclick="calculate()">
+            <input type="button" class="operator" value="+" onclick="appendToDisplay('+')">
+        </div>
+        <div class="row">
+            <!-- Botão "C" ajustado para ocupar dois espaços -->
+            <input type="button" value="C" onclick="clearDisplay()" class="double">
+            <!-- Botão "%" também ajustado para ocupar dois espaços -->
+            <input type="button" value="⌫" onclick="deleteLastCharacter()" class="double">
+            <input type="button" class="operator divide" value="/" onclick="appendToDisplay('/')">
+        </div>
+    </div>
+
+    <script>
+        function appendToDisplay(value) {
+            document.getElementById('display').value += value;
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+        }
+
+        function deleteLastCharacter() {
+            var display = document.getElementById('display');
+            display.value = display.value.slice(0, -1);
+        }
+
+        function calculate() {
+            var result = eval(document.getElementById('display').value);
+            document.getElementById('display').value = result;
+        }
+
+        function toggleFunctions() {
+            var functions = document.querySelector('.functions');
+            functions.style.display = functions.style.display === 'block' ? 'none' : 'block';
+        }
+        
+    </script>
+</body>
+</html>
+
